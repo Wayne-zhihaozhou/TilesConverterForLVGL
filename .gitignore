@@ -1,0 +1,5 @@
+﻿bin/
+obj/
+*.user
+_build.txt
+_SystemSaveBackup.json

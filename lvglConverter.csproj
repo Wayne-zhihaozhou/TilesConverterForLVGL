@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>lvglConverter</RootNamespace>
+    <AssemblyName>lvglConverter</AssemblyName>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Deterministic>true</Deterministic>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Reference artifacts from the reverse-engineering process (not part of the build) -->
+    <Compile Remove="analysis\**" />
+    <EmbeddedResource Remove="analysis\**" />
+    <None Remove="analysis\**" />
+    <Page Remove="analysis\**" />
+  </ItemGroup>
+
+</Project>
+
