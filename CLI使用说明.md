@@ -10,13 +10,15 @@
 
 ```bash
 # 编译(首次)
-dotnet build -c Release
+build.bat
 
-# 使用(默认 RGB565SWAP)
-bin\Release\net472\lvglConverter.exe "C:\path\to\tiles"
+# Linux/macOS：make
+
+# 使用(默认 RGB565)
+bin\Release\lvglConverter.exe "C:\path\to\tiles"
 
 # 指定格式 + 跳过已存在文件
-bin\Release\net472\lvglConverter.exe "C:\path\to\tiles" --type RGB565SWAP --ignore-existing
+bin\Release\lvglConverter.exe "C:\path\to\tiles" --type RGB565SWAP --ignore-existing
 ```
 
 运行后会在控制台打印扫描结果、转换进度和最终统计。
@@ -39,9 +41,11 @@ lvglConverter <inputFolder> [options]
 
 | 选项 | 说明 |
 | --- | --- |
-| `--type <T>` | 目标像素格式:`RGB565SWAP`(默认)或 `RGB565`。`RGB332` / `RGB888` 为占位格式,不可用。 |
+| `--type <T>` | 目标像素格式:`RGB565`(默认)或 `RGB565`。`RGB332` / `RGB888` 为占位格式,不可用。 |
 | `--ignore-existing` | 若某瓦片的 `.bin` 已存在且大小为规定长度(131076 字节),则跳过不重写。 |
 | `-h`, `--help` | 打印帮助并退出。 |
+
+* 额外支持（不影响原有行为）：`-help` 等价于 `--help`；`--type rgb565_swap` 是 `RGB565SWAP` 的下划线写法，等价于 `rgb565swap`。
 
 > 参数顺序任意,例如 `--type RGB565SWAP "C:\tiles"` 也可以。
 
@@ -92,10 +96,10 @@ tiles\
 ## 6. 示例
 
 ```bash
-# 基本转换(默认 RGB565SWAP)
+# 基本转换(默认 RGB565)
 lvglConverter "D:\map\tiles"
 
-# RGB565 交换字节序
+# RGB565SWAP 交换字节序
 lvglConverter "D:\map\tiles" --type RGB565SWAP
 
 # 跳过已生成且大小正确的 .bin(增量/断点续跑)
@@ -110,7 +114,7 @@ lvglConverter "D:\map\tiles" --type RGB565SWAP --ignore-existing
 ## 7. 常见问题
 
 * **提示「No PNG map tiles found」**:根目录下没有数字命名的子文件夹,或其中没有 `.png`。请检查目录结构(见第 3 节)。
-* **某些文件失败/未处理**:控制台会在结尾列出这些文件路径。常见原因是 PNG 损坏或无法被 `System.Drawing` 读取;这类文件不会生成 `.bin`。
+* **某些文件失败/未处理**:控制台会在结尾列出这些文件路径。常见原因是 PNG 损坏或无法被解码器（stb_image）读取;这类文件不会生成 `.bin`。
 * **想跳过已存在的 .bin**:加 `--ignore-existing`,但仅当已有 `.bin` 恰好为 131076 字节时才跳过(这是原程序的判定口径)。
 * **RGB332 / RGB888 能用吗?**:不能,这两个是占位格式,选择后会以退出码 2 报错。
 
@@ -118,7 +122,7 @@ lvglConverter "D:\map\tiles" --type RGB565SWAP --ignore-existing
 
 ## 8. 环境要求
 
-* 目标框架 `.NET Framework 4.7.2`,需在能运行 .NET Framework 的 Windows 上执行。
-* 首次 `dotnet build` 会自动下载 4.7.2 引用包(需联网)。
+* **C/C++ 版（默认）**：用 `build.bat`（MSVC，需「C++ desktop development」工作负载）或 `make`（gcc/clang）构建。解码库 stb_image 已随项目内置，无需外部依赖。
+* **原 C# 版**：仍保留于 `bin\Release\net472\lvglConverter.exe`（.NET Framework 4.7.2），转换逻辑与 C++ 版一致，仅作对照。
 
 
