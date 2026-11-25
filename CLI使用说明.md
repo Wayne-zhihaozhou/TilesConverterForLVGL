@@ -123,6 +123,6 @@ lvglConverter "D:\map\tiles" --type RGB565SWAP --ignore-existing
 ## 8. 环境要求
 
 * **C/C++ 版（默认）**：用 `build.bat`（MSVC，需「C++ desktop development」工作负载）或 `make`（gcc/clang）构建。解码库 stb_image 已随项目内置，无需外部依赖。
-* **原 C# 版**：仍保留于 `bin\Release\net472\lvglConverter.exe`（.NET Framework 4.7.2），转换逻辑与 C++ 版一致，仅作对照。
+* **原 C# 版**：已全面移除（原 .NET Framework 4.7.2 实现）。
 
 

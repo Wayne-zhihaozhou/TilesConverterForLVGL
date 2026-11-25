@@ -3,7 +3,7 @@
 把原 WPF/CLI 程序 **TilesConverterForLVGL.exe**（逆向自 .NET 程序集 lvglConverter）重写成 **C/C++**，用于把 PNG 地图瓦片转换成 LVGL 嵌入式显示用的二进制图像 (.bin)。
 
 > 原版是 C# (.NET Framework 4.7.2)，用 System.Drawing.Bitmap.GetPixel() 逐像素读取 + List<> 分配，处理速度慢。本版用直接读缓冲区的 PNG 解码 + 紧凑打包循环 + 多线程，速度显著提升（见「性能」节）。
-> 原 C# 源码 (Program.cs / FileHandler.cs / LVGLImageType.cs) 保留在本目录作为对照。
+> 原 C# 源码已全面移除（仅保留 analysis/ 逆向分析笔记）。
 
 ## 目录结构
 
