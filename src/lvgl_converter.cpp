@@ -37,7 +37,7 @@ enum class ImgType { RGB332, RGB565, RGB565SWAP, RGB888 };
 
 struct Options {
     std::string folderPath;
-    ImgType     type         = ImgType::RGB565;   // matches the original executable's default
+    ImgType     type         = ImgType::RGB565SWAP;  // user-requested default (original was RGB565)
     bool        ignoreExisting = false;
     bool        showHelp     = false;
 };
@@ -68,7 +68,7 @@ static void printUsage(std::FILE *w)
     std::fprintf(w, "Arguments:\n");
     std::fprintf(w, "  <inputFolder>    Folder containing numbered subfolders of PNG map tiles (required).\n\n");
     std::fprintf(w, "Options:\n");
-    std::fprintf(w, "  --type <T>       Target pixel format: RGB565 (default) or RGB565SWAP.\n");
+    std::fprintf(w, "  --type <T>       Target pixel format: RGB565SWAP (default) or RGB565.\n");
     std::fprintf(w, "                   RGB332 / RGB888 are placeholders and not available.\n");
     std::fprintf(w, "  --ignore-existing   Skip tiles whose .bin already exists with the expected size.\n");
     std::fprintf(w, "  -h, --help       Show this help and exit.\n\n");

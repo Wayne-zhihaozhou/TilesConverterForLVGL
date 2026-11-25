@@ -14,7 +14,7 @@ build.bat
 
 # Linux/macOS：make
 
-# 使用(默认 RGB565)
+# 使用(默认 RGB565SWAP)
 bin\Release\lvglConverter.exe "C:\path\to\tiles"
 
 # 指定格式 + 跳过已存在文件
@@ -41,7 +41,7 @@ lvglConverter <inputFolder> [options]
 
 | 选项 | 说明 |
 | --- | --- |
-| `--type <T>` | 目标像素格式:`RGB565`(默认)或 `RGB565`。`RGB332` / `RGB888` 为占位格式,不可用。 |
+| `--type <T>` | 目标像素格式:`RGB565SWAP`(默认)或 `RGB565`。`RGB332` / `RGB888` 为占位格式,不可用。 |
 | `--ignore-existing` | 若某瓦片的 `.bin` 已存在且大小为规定长度(131076 字节),则跳过不重写。 |
 | `-h`, `--help` | 打印帮助并退出。 |
 
@@ -96,7 +96,7 @@ tiles\
 ## 6. 示例
 
 ```bash
-# 基本转换(默认 RGB565)
+# 基本转换(默认 RGB565SWAP)
 lvglConverter "D:\map\tiles"
 
 # RGB565SWAP 交换字节序
