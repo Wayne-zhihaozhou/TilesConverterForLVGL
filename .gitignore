@@ -1,6 +1,12 @@
-﻿bin/
-obj/
-*.user
-_build.txt
-_SystemSaveBackup.json
+﻿# C++ converter build output
+bin/
+build/
 
+# MSVC / dotnet intermediates
+*.obj
+*.ilk
+*.pdb
+obj/
+
+# OS / editor
+.DS_Store
