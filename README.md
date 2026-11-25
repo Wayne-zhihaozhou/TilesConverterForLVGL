@@ -1,8 +1,10 @@
 ﻿# lvglConverter — Reverse-Engineered Source
 
 Reconstructed C# source of the Windows tool **`TilesConverterForLVGL.exe`**
-(alassembly name `lvglConverter`), a WPF utility that converts PNG map tiles into
-the binary image format consumed by **[LVGL](https://lvgl.io/)** embedded displays.
+(assembly name `lvglConverter`). This is a **console (CLI) application** that converts
+PNG map tiles into the binary image format consumed by **[LVGL](https://lvgl.io/)**
+embedded displays. The original shipped as a WPF app; the UI has been removed and
+replaced with a command-line interface while keeping the conversion logic identical.
 
 > Original project path (from embedded PDB string):
 > `C:\Users\empwl\source\repos\mapConverter\lvglConverter` · Copyright © 2021.
@@ -14,10 +16,33 @@ the binary image format consumed by **[LVGL](https://lvgl.io/)** embedded displa
 Given a folder tree of numbered subfolders holding PNG map tiles, it writes one
 `.bin` file per tile in an LVGL-friendly packed format:
 
-* Recursively collects `*.png` files under numeric directories (`GetTileFiles`).
+* Recursively collects `*.png` files under numeric directories.
 * Rasterises each tile with `System.Drawing.Bitmap.GetPixel`.
 * Packs pixels into **RGB565** (or RGB565-SWAP) and prepends a 4-byte header.
-* Runs the work on up to 16 background threads with a progress UI.
+* Runs the work on up to 16 background worker threads.
+
+### CLI usage
+
+```
+lvglConverter <inputFolder> [options]
+
+Arguments:
+  <inputFolder>    Folder containing numbered subfolders of PNG map tiles (required).
+
+Options:
+  --type <T>       Target pixel format: RGB565 (default) or RGB565SWAP.
+                   RGB332 / RGB888 are placeholders and not available.
+  --ignore-existing   Skip tiles whose .bin already exists with the expected size.
+  -h, --help       Show this help and exit.
+
+Exit codes: 0 = all converted, 1 = some errors, 2 = usage/argument error.
+```
+
+Example:
+
+```bash
+lvglConverter "C:\tiles" --type RGB565SWAP --ignore-existing
+```
 
 ### Binary container format (per tile)
 
@@ -45,7 +70,7 @@ RGB565      : word written little-endian
 RGB565SWAP  : word written big-endian   (high byte first)
 ```
 
-`RGB332` / `RGB888` are exposed in the UI enum but return `null` (not implemented).
+`RGB332` / `RGB888` are exposed in the enum but return `null` (not implemented).
 
 ---
 
@@ -81,16 +106,10 @@ RGB565SWAP  : word written big-endian   (high byte first)
 
 ```
 TilesConverterForLVGL-Reverse/
-├── lvglConverter.csproj        # net472 WPF Exe (matches original target)
-├── src/
-│   ├── App.xaml.cs             # entry point (faithful: explicit static Main)
-│   ├── MainWindow.xaml         # reconstructed UI (x:Names match code-behind)
-│   ├── MainWindow.xaml.cs      # recovered code-behind
-│   ├── FileHandler.cs          # per-thread tile -> .bin conversion
-│   ├── LVGLImageType.cs        # RGB332/RGB565/RGB565SWAP/RGB888 enum
-│   └── Properties/
-│       ├── Resources.Designer.cs
-│       └── Settings.Designer.cs
+├── lvglConverter.csproj        # net472 console Exe (matches original target)
+├── Program.cs                  # CLI entry point + argument parsing + orchestration
+├── FileHandler.cs              # per-thread tile -> .bin conversion
+├── LVGLImageType.cs            # RGB332/RGB565/RGB565SWAP/RGB888 enum
 └── analysis/
     └── decompiled-sources/
         └── TilesConverterForLVGL.ilspycmd.cs   # raw ilspycmd dump (reference)
@@ -101,6 +120,7 @@ TilesConverterForLVGL-Reverse/
 ```bash
 dotnet build -c Release
 # -> bin\Release\net472\lvglConverter.exe
+bin\Release\net472\lvglConverter.exe "C:\tiles" --type RGB565SWAP
 ```
 
 Requires the .NET Framework 4.7.2 reference packs (auto-downloaded on first build).
@@ -109,12 +129,12 @@ Requires the .NET Framework 4.7.2 reference packs (auto-downloaded on first buil
 
 ## Fidelity notes / caveats
 
-* **Logic:** `FileHandler` pixel/header packing and `MainWindow` orchestration are
+* **Logic:** `FileHandler` pixel/header packing and the parallel orchestration are
   reproduced faithfully; rebuilt binary reproduces the original's user strings.
 * **Interpolated strings:** ilspycmd un-interpolates `$"..."` into concatenations;
-  these have been restored to interpolated form to match the likely original source
-  (verified against composite strings still present in the original resource blob).
-* **XAML:** reconstructed from the recovered control set + wiring, not byte-extracted.
-  Exact pixel layout / button labels may differ from the original visual.
-* **Assembly metadata** (Company/Product/Description) is omitted — it was cosmetic.
-* `RGB332`/`RGB888` intentionally return `null`, matching original behaviour.
+  these have been restored to interpolated form to match the likely original source.
+* **UI removed:** the WPF `App.xaml` / `MainWindow.xaml(.cs)` were replaced by a CLI
+  entry point. The folder/type/ignore semantics are preserved; progress is printed
+  to the console instead of a progress bar, and there is no "Handle/delete" button —
+  failed tiles are reported in the summary line.
+* **RGB332**/**RGB888** intentionally return `null`, matching original behaviour.
